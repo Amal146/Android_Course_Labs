@@ -74,7 +74,7 @@ fun ArticleCard(background: Painter, title: String, part1: String, part2: String
 @Preview(showBackground = true)
 @Composable
 fun ArticlePreview(){
-    MyApplicationTheme {
+    MyApplicationTheme {0
         ComposeArticleApp()
     }
 }
