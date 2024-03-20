@@ -105,7 +105,9 @@ fun TipTimeLayout() {
                 .fillMaxWidth(),
             label = R.string.bill_amount,
             leadingIcon = R.drawable.money,
-            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number , imeAction = ImeAction.Next),
+            keyboardOptions = KeyboardOptions.Default.copy(
+                keyboardType = KeyboardType.Number ,
+                imeAction = ImeAction.Next),
             value = amountInput ,
             onValueChange = {amountInput = it}
         )
@@ -156,7 +158,12 @@ fun TipTimeLayoutPreview() {
 //some function
 
 @Composable
-fun EditNumberField(modifier: Modifier = Modifier, @DrawableRes leadingIcon: Int, @StringRes label: Int, keyboardOptions: KeyboardOptions, value: String, onValueChange: (String) -> Unit )
+fun EditNumberField(modifier: Modifier = Modifier,
+                    @DrawableRes leadingIcon: Int,
+                    @StringRes label: Int,
+                    keyboardOptions: KeyboardOptions,
+                    value: String,
+                    onValueChange: (String) -> Unit )
 {
 
     TextField(
