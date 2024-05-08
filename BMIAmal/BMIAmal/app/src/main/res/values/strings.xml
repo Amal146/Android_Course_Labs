@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">BMIAmal</string>
+    <string name="app_title">BMI Calculator</string>
+    <string name="obese">Obese</string>
+    <string name="underweight">Underweight</string>
+    <string name="overweight">Overweight</string>
+    <string name="normalweight">Normalweight</string>
+    <string name="weightLabel">Weight(Kg)</string>
+    <string name="heightLabel">Height(m)</string>
+    <string name="BMI">BMI value</string>
+    <string name="BMIclass">classification</string>
+</resources>
