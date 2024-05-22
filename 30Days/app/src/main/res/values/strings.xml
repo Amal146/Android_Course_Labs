@@ -1,3 +1,35 @@
 <resources>
     <string name="app_name">30Days</string>
+
+    <string name="day1">Day 1</string>
+    <string name="dessert1">Brownies</string>
+    <string name="description1">Delicious brownie chocolate chips cakes</string>
+
+    <string name="day2">Day 2</string>
+    <string name="dessert2">Cake</string>
+    <string name="description2">Scrumptious fluffy grandma recipe cake</string>
+
+    <string name="day3">Day 3</string>
+    <string name="dessert3">Cheesecake</string>
+    <string name="description3">Creamy cheesecake with a crumbly crust</string>
+
+    <string name="day4">Day 4</string>
+    <string name="dessert4">Cupcakes</string>
+    <string name="description4">Assorted flavors of delightful cupcakes</string>
+
+    <string name="day5">Day 5</string>
+    <string name="drink">Lemonade</string>
+    <string name="description5">Refreshing lemonade to quench your thirst</string>
+
+    <string name="day6">Day 6</string>
+    <string name="dessert6">Lemon Tart</string>
+    <string name="description6">Tangy lemon tart with a buttery crust</string>
+
+    <string name="day7">Day 7</string>
+    <string name="dessert7">Macarons</string>
+    <string name="description7">Colorful and delicate French macarons</string>
+
+    <string name="day8">Day 8</string>
+    <string name="dessert8">Waffles</string>
+    <string name="description8">Crisp and fluffy waffles topped with syrup</string>
 </resources>
