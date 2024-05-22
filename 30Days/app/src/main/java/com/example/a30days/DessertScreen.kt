@@ -5,6 +5,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -72,13 +73,17 @@ fun DessertCard(
             }
             IconButton(
                 onClick = {expanded = !expanded} ,
-                Modifier.fillMaxWidth(3f).height(200.dp)
+                Modifier
+                    .fillMaxWidth(3f)
+                    .height(200.dp)
             ) {
                 Image(
                     painter = painterResource(id = dessert.imgRes),
                     contentDescription = "",
                 )
             }
+            
+            Spacer(modifier = modifier.height(20.dp))
 
             if (expanded) {
                 Text(
@@ -99,6 +104,7 @@ fun DessertList(desserts: List<Dessert> , modifier: Modifier = Modifier){
         }
     }
 }
+
 @Preview
 @Composable
 fun CardPreview() {

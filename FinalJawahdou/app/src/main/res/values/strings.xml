@@ -1,0 +1,24 @@
+<resources>
+    <string name="app_name">FinalJawahdou</string>
+    <string name="club1"> 3Zero Campus Club TBS </string>
+    <string name="description1">A French Origin NGO in partnership with Convergence and 3Zero France and We Love Sousse with a mission of : Achieving zero poverty, exclusion and carbon through professional development and entrepreneurship. </string>
+    <string name="club2">Act To Impact - TBS</string>
+    <string name="description2">Act To impact is a child focused charity club . The club was founded in September 2013 by Mr. Mohamed Hedi Selmi who believed that children need an actor to impact their lives and sculpt a better future for them. Therefor , we work together to provide the opportunity for kids to live a better life and create valuable memories. </string>
+    <string name="club3">ATLAS Future Leaders TBS-Chapter</string>
+    <string name="description3">ATLAS (Association Tunisienne pour le Leadership, Auto-développement et solidarité) Future Leaders-TBS chapter, is a non profit, nonpolitical organization founded by Hamza Guizani, joined and run by students of institution of higher education “Tunis Business School”. Its members are interested in Business, Leadership and Humanitarian work. </string>
+    <string name="club4">Enactus TBS</string>
+    <string name="description4">Enactus TBS is a club that operates as a subsidiary of the international non-governmental organization Enactus dedicated to creating positive social and economic change through entrepreneurship, innovation, and responsible leadership. </string>
+    <string name="club5"> Junior Chamber International - TBS El Mourouj </string>
+    <string name="description5">Junior Chamber International is an organization that emphasizes sustainable development through building future leaders ready to face global and local economies. Our aim is to develop our members skills and offer them leadership positions while making positive impact. </string>
+    <string name="club6">Merit TBS</string>
+    <string name="description6"> Merit TBS is a dynamic club dedicated to exploring the vast and ever-evolving world of IT. We aim to empower our members with the knowledge and skills needed to excel in the digital age. That’s why we named our Club Merit: Make everything related to IT. </string>
+    <string name="club7">TBS Junior Enterprise</string>
+    <string name="description7">TBS Junior Enterprise is a marketing consulting firm that operates within Tunis Business School, and it is entirely managed by students. The firm was established on September 8th, 2017 and it specializes in providing market research services.  </string>
+    <string name="club8">TBS Startup Nation</string>
+    <string name="description8">Tunis Business School Startup Nation Entity is an entrepreneurial non-profit organization. TSN is working towards planting the spirit of entrepreneurship and featuring students as early-stage entrepreneurs. TSN provides the necessary training and entrepreneurial framework to build members’ and alumni capacities. </string>
+    <string name="club9">TIMUN TBS</string>
+    <string name="description9">Our club has won multiple awards such as the Community Engagement Hero, Marketing Champion, and, Best Club awards. </string>
+    <string name="club10">Tuni ACT Tunis Business School </string>
+    <string name="description10">Our mission is to provide an opportunity for students to address the physical and social needs of their communities and to enhance the knowledge and skills that will assist them in their personal and professional development along the way. </string>
+
+</resources>

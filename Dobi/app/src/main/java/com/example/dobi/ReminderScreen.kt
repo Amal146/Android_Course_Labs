@@ -140,7 +140,7 @@ fun AddReminderDialog(onDismiss: () -> Unit, onAdd: (String, String, String) -> 
     )
 
     // Display the TimePickerDialog conditionally
-    if (showDialog) {
+    /*if (showDialog) {
         TimePickerDialog(
             state = state,
             onCancel = { showDialog = false },
@@ -156,7 +156,7 @@ fun AddReminderDialog(onDismiss: () -> Unit, onAdd: (String, String, String) -> 
                 EditTime(state = state)
             }
         )
-    }
+    }*/
 }
 
 
