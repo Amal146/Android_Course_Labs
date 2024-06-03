@@ -84,28 +84,33 @@ fun Adviser(navController: NavHostController, modifier: Modifier = Modifier){
 @Composable
 fun AdviserScreen(modifier: Modifier = Modifier){
         // List of diabetes advice
-        val adviceList = listOf(
-            "Stay hydrated by drinking plenty of water.",
-            "Maintain a balanced diet with low sugar intake.",
-            "Exercise regularly to manage blood sugar levels.",
-            "Monitor your blood glucose levels regularly.",
-            "Take your medications as prescribed.",
-            "Get regular check-ups with your healthcare provider.",
-            "Eat meals at regular times each day.",
-            "Incorporate more fruits and vegetables into your diet.",
-            "Avoid sugary drinks and opt for water or unsweetened beverages.",
-            "Educate yourself about diabetes to better manage it."
-        )
+    val adviceList = listOf(
+        "Stay hydrated by drinking plenty of water.",
+        "Maintain a balanced diet with low sugar intake.",
+        "Exercise regularly to manage blood sugar levels.",
+        "Monitor your blood glucose levels regularly.",
+        "Take your medications as prescribed.",
+        "Get regular check-ups with your healthcare provider.",
+        "Eat meals at regular times each day.",
+        "Incorporate more fruits and vegetables into your diet.",
+        "Avoid sugary drinks and opt for water or unsweetened beverages.",
+        "Educate yourself about diabetes to better manage it.",
+        "Keep stress levels in check with relaxation techniques.",
+        "Get adequate sleep each night to support overall health.",
+        "Avoid skipping meals to maintain stable blood sugar levels.",
+        "Limit your alcohol intake and avoid smoking.",
+        "Choose whole grains over refined grains for better nutrition."
+    )
 
-        // State to hold the current advice
+
+    // State to hold the current advice
         var currentAdvice by remember { mutableStateOf("Click the button for a diabetes tip!") }
 
         Column(
             modifier = modifier
                 .fillMaxHeight()
                 .fillMaxWidth()
-                .background(color = Color(185, 220, 249, 255))
-                .padding(16.dp),
+                .background(color = Color(185, 220, 249, 255)),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
@@ -113,12 +118,12 @@ fun AdviserScreen(modifier: Modifier = Modifier){
                 painter = painterResource(id = R.drawable.drop) ,
                 contentDescription = "",
                 Modifier
-                    .height(400.dp)
+                    .height(300.dp)
                     .background(color = Color(185,220,249,255))
                 ,
             )
             Spacer(
-                modifier = Modifier.height(20.dp)
+                modifier = Modifier.height(10.dp)
             )
             Text(
                 text = "Random Advice",
@@ -128,9 +133,10 @@ fun AdviserScreen(modifier: Modifier = Modifier){
 
             )
             Spacer(
-                modifier = Modifier.height(20.dp)
+                modifier = Modifier.height(5.dp)
             )
             Text(
+                modifier = modifier.padding(horizontal = 16.dp),
                 text = currentAdvice,
                 color = Color.DarkGray,
                 textAlign = TextAlign.Center,
@@ -138,7 +144,7 @@ fun AdviserScreen(modifier: Modifier = Modifier){
                 lineHeight = 40.sp
             )
             Spacer(
-                modifier = Modifier.height(60.dp)
+                modifier = Modifier.height(10.dp)
             )
             Button(
                 onClick = {

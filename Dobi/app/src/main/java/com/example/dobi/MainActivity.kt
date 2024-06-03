@@ -14,6 +14,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.dobi.ui.theme.DobiTheme
 
 class MainActivity : ComponentActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
@@ -43,7 +44,15 @@ class MainActivity : ComponentActivity() {
                         composable(Screen.Adviser.rout){
                             Adviser(navController = navController)
                         }
-
+                        composable(Screen.Profile.rout){
+                            ProfileSettingsScreen(navController = navController)
+                        }
+                        composable(Screen.Login.rout){
+                            LoginScreen(navController = navController)
+                        }
+                        composable(Screen.Signup.rout){
+                            SignUpScreen(navController = navController)
+                        }
                     }
 
                 }

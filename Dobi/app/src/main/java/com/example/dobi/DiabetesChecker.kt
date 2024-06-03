@@ -1,5 +1,6 @@
 package com.example.dobi
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -46,6 +47,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Checker(navController: NavHostController, modifier: Modifier = Modifier.background(Color(
@@ -85,7 +87,7 @@ fun Checker(navController: NavHostController, modifier: Modifier = Modifier.back
             )
         }
     ) {
-        CheckerScreen(modifier = modifier.padding(it))
+        CheckerScreen(modifier = modifier.padding(16.dp))
     }
 }
 
@@ -102,7 +104,6 @@ fun CheckerScreen(modifier: Modifier = Modifier) {
 
     Column(
         modifier = modifier
-            .padding(top = 16.dp)
             .fillMaxHeight()
             .fillMaxWidth()
             .background(color = Color(254, 242, 172, 255)),
@@ -112,6 +113,7 @@ fun CheckerScreen(modifier: Modifier = Modifier) {
         Spacer(modifier = Modifier.height(20.dp))
 
         Text(
+            modifier = modifier.padding(top = 60.dp),
             text = "Age: ${age.toInt()}",
             fontSize = 30.sp,
             fontWeight = FontWeight.Bold,
@@ -129,10 +131,10 @@ fun CheckerScreen(modifier: Modifier = Modifier) {
 
 
         Text(
-            text = "Glucose Level(mmol/L): ${String.format("%.1f", bloodGlucose)}",
+            text = "Glucose Level(mmol/L) \n \n ${String.format("%.1f", bloodGlucose)}",
+            textAlign = TextAlign.Center ,
             fontSize = 30.sp,
             fontWeight = FontWeight.Bold,
-            textDecoration = TextDecoration.Underline,
             color = Color(239, 98, 145, 255)
         )
         Slider(
@@ -186,14 +188,18 @@ fun CheckerScreen(modifier: Modifier = Modifier) {
 
         Text(
             text = result,
-            fontSize = 36.sp,
+            modifier = modifier.padding(30.dp),
+            fontSize = 40.sp,
             fontWeight = FontWeight.ExtraBold,
             color = when (result) {
-            "Normal" -> Color.Green
-            "Almost Severe" -> Color.Magenta
-            "Severe" -> Color.Red
-            else -> Color.Black
-        })
+                "Normal" -> Color.Green
+                "Borderline" -> Color(0xFFFFA500) // Orange
+                "High" -> Color.Red
+                "Danger - High" -> Color.Red
+                "Low" -> Color.Magenta
+                "Danger - Low" -> Color.Red
+                else -> Color.Black
+            })
     }
 }
 
@@ -203,9 +209,12 @@ fun getBloodGlucoseResult(age: Int, time: String, bloodGlucose: Float): String {
             (age <= 18 && bloodGlucose in 3.9..5.8) ||
                     (age in 19..64 && bloodGlucose in 4.0..5.4) ||
                     (age >= 65 && bloodGlucose in 4.5..6.0) -> "Normal"
-            bloodGlucose > 6.9 -> "Severe"
-            bloodGlucose > 5.9 -> "Almost Severe"
-            else -> "Severe"
+            bloodGlucose in 7.0..10.0 -> "Borderline"
+            bloodGlucose in 10.1..13.7 -> "High"
+            bloodGlucose > 13.7 -> "Danger - High"
+            bloodGlucose in 3.0..3.8 -> "Low"
+            bloodGlucose < 3.0 -> "Danger - Low"
+            else -> "Unknown"
         }
         "Post-meal" -> when {
             bloodGlucose <= 7.8 -> "Normal"
@@ -214,10 +223,13 @@ fun getBloodGlucoseResult(age: Int, time: String, bloodGlucose: Float): String {
             else -> "Unknown"
         }
         "2hrs Post-meal" -> when {
-            bloodGlucose in 5.0..7.0 -> "Normal"
-            bloodGlucose > 8.0 -> "Severe"
-            bloodGlucose > 7.1 -> "Almost Severe"
-            else -> "Severe"
+            bloodGlucose in 4.0..6.0 -> "Normal"
+            bloodGlucose in 7.0..10.0 -> "Borderline"
+            bloodGlucose in 10.1..13.7 -> "High"
+            bloodGlucose > 13.7 -> "Danger - High"
+            bloodGlucose in 3.0..3.8 -> "Low"
+            bloodGlucose < 3.0 -> "Danger - Low"
+            else -> "Unknown"
         }
         else -> "Severe"
     }

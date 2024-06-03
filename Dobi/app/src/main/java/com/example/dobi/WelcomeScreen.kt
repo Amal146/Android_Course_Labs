@@ -10,6 +10,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -20,17 +22,21 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 
 @Composable
 fun Welcome(navController: NavHostController, modifier: Modifier = Modifier) {
     Column (modifier = Modifier
+        .clickable { navController.navigate(Screen.Home.rout) }
         .background(color = Color(255, 255, 153))
         .fillMaxHeight()
         .fillMaxWidth()
-        .padding(20.dp),
+        .padding(20.dp)
+        ,
         horizontalAlignment = Alignment.CenterHorizontally ,
         verticalArrangement = Arrangement.Center
     ){
@@ -60,11 +66,30 @@ fun Welcome(navController: NavHostController, modifier: Modifier = Modifier) {
             contentDescription = "",
             Modifier
                 .height(350.dp)
-                .clickable{navController.navigate(Screen.Home.rout)}
+
             ,
         )
 
+        Button(
+            onClick = {navController.navigate(Screen.Signup.rout)},
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color(
+                    138,
+                    194,
+                    74,
+                    255
+                )
+            ),
+        ) {
+            Text(text = "Sign Up", color = Color.White)
+        }
+        
     }
 
 }
 
+@Preview
+@Composable
+fun PreviewWelcome(){
+    Welcome(navController = rememberNavController())
+}

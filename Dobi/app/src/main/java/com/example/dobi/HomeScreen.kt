@@ -45,7 +45,31 @@ fun Home(navController: NavHostController, modifier: Modifier = Modifier){
     Scaffold(
         topBar = {
             modifier.fillMaxSize()
-            DisplayTopBar()
+            TopAppBar(
+                title = {
+                    Text(text = "Home" )
+                },
+                actions = {
+                    IconButton(onClick = {navController.navigate(Screen.Profile.rout)}) {
+                        Icon(
+                            imageVector = Icons.Filled.AccountCircle,
+                            contentDescription = "Profile",
+                            modifier = Modifier
+                                .size(48.dp)
+                                .fillMaxWidth()
+                                .padding(end = 8.dp),
+                            tint = Color.White,
+
+                            )
+                    }
+                },
+
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = Color(139, 188, 62, 255),
+                    titleContentColor = Color(255,255,255) ,
+                )
+
+            )
         }
     ) {
             Column(
@@ -136,34 +160,6 @@ fun Home(navController: NavHostController, modifier: Modifier = Modifier){
 
 
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun DisplayTopBar(modifier: Modifier = Modifier){
-    TopAppBar(
-        title = {
-            Text(text = "Home" )
-        },
-        actions = {
-            IconButton(onClick = { /* do something */ }) {
-                Icon(
-                    imageVector = Icons.Filled.AccountCircle,
-                    contentDescription = "Profile",
-                    modifier = Modifier
-                        .size(48.dp)
-                        .fillMaxWidth()
-                        .padding(end = 8.dp),
-                    tint = Color.White,
-                )
-            }
-        },
-
-        colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = Color(139, 188, 62, 255),
-            titleContentColor = Color(255,255,255) ,
-        )
-
-    )
-}
 
 
 @Preview

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "686987394344",
+    "project_id": "dobi-efaa1",
+    "storage_bucket": "dobi-efaa1.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:686987394344:android:0295c31c892f2fee2d641d",
+        "android_client_info": {
+          "package_name": "com.example.dobi"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBl2a0fNG0laBwvVPDdDobA_ffbo8Z0RRI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
