@@ -1,3 +1,6 @@
 <resources>
     <string name="app_name">Dobi</string>
+    <string name="medication_reminder">Medication Reminder</string>
+    <string name="medication_reminder_time">It is time to take your medication, %s.%s.</string>
+
 </resources>

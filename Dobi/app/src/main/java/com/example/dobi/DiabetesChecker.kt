@@ -41,6 +41,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -206,30 +207,28 @@ fun CheckerScreen(modifier: Modifier = Modifier) {
 fun getBloodGlucoseResult(age: Int, time: String, bloodGlucose: Float): String {
     return when (time) {
         "Fasting" -> when {
-            (age <= 18 && bloodGlucose in 3.9..5.8) ||
+            (age <= 12 && bloodGlucose in 3.9..5.8) ||
                     (age in 19..64 && bloodGlucose in 4.0..5.4) ||
                     (age >= 65 && bloodGlucose in 4.5..6.0) -> "Normal"
-            bloodGlucose in 7.0..10.0 -> "Borderline"
+            bloodGlucose in 5.9..10.0 -> "Borderline"
             bloodGlucose in 10.1..13.7 -> "High"
             bloodGlucose > 13.7 -> "Danger - High"
             bloodGlucose in 3.0..3.8 -> "Low"
-            bloodGlucose < 3.0 -> "Danger - Low"
-            else -> "Unknown"
+            else -> "Danger - Low"
+
         }
         "Post-meal" -> when {
-            bloodGlucose <= 7.8 -> "Normal"
-            bloodGlucose > 10.0 -> "Severe"
-            bloodGlucose > 7.9 -> "Almost Severe"
-            else -> "Unknown"
+            bloodGlucose <= 11.1 -> "Normal"
+            bloodGlucose <= 12.8 -> "Borderline"
+            else -> "Severe"
         }
         "2hrs Post-meal" -> when {
             bloodGlucose in 4.0..6.0 -> "Normal"
-            bloodGlucose in 7.0..10.0 -> "Borderline"
-            bloodGlucose in 10.1..13.7 -> "High"
+            bloodGlucose in 7.0..11.1 -> "Borderline"
+            bloodGlucose in 11.1..13.7 -> "High"
             bloodGlucose > 13.7 -> "Danger - High"
-            bloodGlucose in 3.0..3.8 -> "Low"
-            bloodGlucose < 3.0 -> "Danger - Low"
-            else -> "Unknown"
+            bloodGlucose in 3.0..3.9 -> "Low"
+            else  -> "Danger - Low"
         }
         else -> "Severe"
     }
@@ -238,7 +237,7 @@ fun getBloodGlucoseResult(age: Int, time: String, bloodGlucose: Float): String {
 
 
 
-@Preview
+@Preview(device = Devices.PHONE)
 @Composable
 fun CheckerPreview() {
     Checker(navController = rememberNavController())

@@ -21,6 +21,7 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -51,43 +52,72 @@ import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import java.net.PasswordAuthentication
 
 
 data class User(
-    val name: String,
-    val email: String,
-    val pass: String,
-    val profileImageRes: Int
+    val name: String = "",
+    val email: String = "",
+    val pass: String = "",
+    val profileImageRes: Int = 0
 )
 
-fun saveUser(user: User) {
-    val database = FirebaseDatabase.getInstance()
-    val myRef = database.getReference("User")
 
-    // Assuming you want to use the email as the key
-    val userKey = user.email.replace(".", ",")  // Firebase keys cannot contain dots
+val database = FirebaseDatabase.getInstance()
+val myRef = database.getReference("User")
+
+fun saveUser(user: User, onResult: (Boolean) -> Unit) {
+
+    val userKey = user.email.replace(".", ",")
     myRef.child(userKey).setValue(user)
         .addOnSuccessListener {
             Log.d("Firebase", "User profile saved successfully")
+            onResult(true)
         }
         .addOnFailureListener {
             Log.d("Firebase", "Failed to save user profile")
+            onResult(false)
         }
 }
-class UserViewModel : ViewModel() {
-    val email = MutableLiveData<String>()
-    val username = MutableLiveData<String>()
-    val password = MutableLiveData<String>()
+
+
+fun checkUsernameExists(username: String, onResult: (Boolean) -> Unit) {
+
+    myRef.orderByChild("name").equalTo(username).addListenerForSingleValueEvent(object :
+        ValueEventListener {
+        override fun onDataChange(snapshot: DataSnapshot) {
+            onResult(snapshot.exists())
+        }
+
+        override fun onCancelled(error: DatabaseError) {
+            onResult(false)
+        }
+    })
 }
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SignUpScreen(navController: NavHostController , modifier: Modifier = Modifier) {
     var email by remember { mutableStateOf("") }
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
-    var rememberMe by remember { mutableStateOf(false) }
+    var loading by remember { mutableStateOf(false) }
+    var message by remember { mutableStateOf("") }
+    var emailError by remember { mutableStateOf<String?>(null) }
+    var usernameError by remember { mutableStateOf<String?>(null) }
+    var passwordError by remember { mutableStateOf<String?>(null) }
+
+    fun validateEmail(email: String): Boolean {
+        return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()
+    }
+
+    fun validatePassword(password: String): Boolean {
+        return password.length >= 6
+    }
 
     Scaffold(
         topBar = {
@@ -105,7 +135,8 @@ fun SignUpScreen(navController: NavHostController , modifier: Modifier = Modifie
         content = {
                 paddingValues ->
             Column(
-                modifier = Modifier.background(color = Color(254, 254, 190, 255))
+                modifier = Modifier
+                    .background(color = Color(254, 254, 190, 255))
                     .fillMaxSize()
                     .padding(paddingValues),
                 horizontalAlignment = Alignment.CenterHorizontally
@@ -133,16 +164,11 @@ fun SignUpScreen(navController: NavHostController , modifier: Modifier = Modifie
                     modifier = Modifier
                         .size(100.dp)
                         .clip(CircleShape)
-                        .background(Color.Gray)
                         .align(Alignment.CenterHorizontally)
                 ) {
-                    Icon(
+                    Image(
                         painter = painterResource(id = R.drawable.drop), // Replace with your own drawable resource
                         contentDescription = "Profile Picture",
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(8.dp)
-                            .clickable { }
                     )
                 }
 
@@ -155,7 +181,10 @@ fun SignUpScreen(navController: NavHostController , modifier: Modifier = Modifie
                 ){
                     BasicTextField(
                         value = email,
-                        onValueChange = { email = it },
+                        onValueChange = {
+                            email = it
+                            emailError = if (validateEmail(email)) null else "Invalid email format"
+                        },
                         modifier = Modifier
                             .fillMaxWidth()
                             .background(Color(240, 244, 246, 255))
@@ -168,11 +197,18 @@ fun SignUpScreen(navController: NavHostController , modifier: Modifier = Modifie
                         }
                     )
 
+                    if (emailError != null) {
+                        Text(text = emailError ?: "", color = Color.Red, fontSize = 12.sp)
+                    }
+
                     Spacer(modifier = Modifier.height(16.dp))
 
                     BasicTextField(
                         value = username,
-                        onValueChange = { username = it },
+                        onValueChange = {
+                            username = it
+                            usernameError = null
+                        },
                         modifier = Modifier
                             .fillMaxWidth()
                             .background(Color(240, 244, 246, 255))
@@ -185,11 +221,18 @@ fun SignUpScreen(navController: NavHostController , modifier: Modifier = Modifie
                         }
                     )
 
+                    if (usernameError != null) {
+                        Text(text = usernameError ?: "", color = Color.Red, fontSize = 12.sp)
+                    }
+
                     Spacer(modifier = Modifier.height(16.dp))
 
                     BasicTextField(
                         value = password,
-                        onValueChange = { password = it },
+                        onValueChange = {
+                            password = it
+                            passwordError = if (validatePassword(password)) null else "Password must be at least 6 characters"
+                        },
                         modifier = Modifier
                             .fillMaxWidth()
                             .background(Color(240, 244, 246, 255))
@@ -203,37 +246,51 @@ fun SignUpScreen(navController: NavHostController , modifier: Modifier = Modifie
                         }
                     )
 
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    Row(
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Checkbox(
-                                checked = rememberMe,
-                                onCheckedChange = { rememberMe = it }
-                            )
-                            Text(text = "Remember me")
-                        }
-                        Spacer(modifier = Modifier.width(72.dp))
-
-                        Text(text = "Forgot Password", color = Color.Blue)
+                    if (passwordError != null) {
+                        Text(text = passwordError ?: "", color = Color.Red, fontSize = 12.sp)
                     }
+
 
                     Spacer(modifier = Modifier.height(24.dp))
 
                     Button(
 
                         onClick = {
-                            val user = User(
-                                name = username,
-                                email = email,
-                                pass = password,
-                                profileImageRes = R.drawable.drop
-                            )
-                            saveUser(user)
-                            },
+                            loading = true
+                            message = ""
+                            if (!validateEmail(email)) {
+                                emailError = "Invalid email format"
+                                loading = false
+                                return@Button
+                            }
+                            if (!validatePassword(password)) {
+                                passwordError = "Password must be at least 6 characters"
+                                loading = false
+                                return@Button
+                            }
+                            checkUsernameExists(username) { exists ->
+                                if (exists) {
+                                    usernameError = "Username already exists"
+                                    loading = false
+                                } else {
+                                    val user = User(
+                                        name = username,
+                                        email = email,
+                                        pass = password,
+                                        profileImageRes = R.drawable.drop
+                                    )
+
+                                    saveUser(user) { success ->
+                                        loading = false
+                                        if (success) {
+                                            navController.navigate("login")
+                                        } else {
+                                            message = "Failed to save user profile"
+                                        }
+                                    }
+                                }
+                            }
+                        },
                         colors = ButtonDefaults.buttonColors(
                             containerColor = Color(
                                 138,
@@ -241,16 +298,26 @@ fun SignUpScreen(navController: NavHostController , modifier: Modifier = Modifie
                                 74,
                                 255
                             )
-                        ),
+                        ), enabled = !loading
                     ) {
-                        Text(text = "Sign Up", color = Color.White)
+                        if (loading) {
+                            CircularProgressIndicator(color = Color.White, modifier = Modifier.size(16.dp))
+                        } else {
+                            Text(text = "Sign Up", color = Color.White)
+                        }
+                    }
+
+                    if (message.isNotEmpty()) {
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Text(text = message, color = Color.Red)
                     }
                 }
             }
-
         }
     )
 }
+
+
 
 
 @Preview

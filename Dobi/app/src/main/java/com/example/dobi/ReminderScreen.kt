@@ -69,14 +69,92 @@ import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import java.text.SimpleDateFormat
 import java.time.LocalDateTime
 import java.util.*
 
 
-data class MedicationReminder(val name: String, val time: String, val note: String)
+data class MedicationReminder(val name: String, val time: String, val note: String, val id:Int = 0)
+data class Alarm(val name: String, val time: String, val note: String, val id:Int = 0, val u:String = cna )
+
+val userAlarmsRef = database.getReference("Alarms")
+
+// Function to add an alarm
+fun addAlarmToDatabase(alarmData: Alarm) {
+    userAlarmsRef?.addListenerForSingleValueEvent(object : ValueEventListener {
+        override fun onDataChange(snapshot: DataSnapshot) {
+            val alarmCount = snapshot.childrenCount.toInt()
+
+            // Generate the next alarm name using the count
+            val alarmName = "alarm${alarmCount + 1}"
+
+            // Set the alarm data in the database
+            val alarmRef = userAlarmsRef?.child(alarmName)
+            alarmRef?.setValue(alarmData)
+        }
+
+        override fun onCancelled(error: DatabaseError) {
+            // Handle error
+        }
+    })
+}
+
+//fun getAlarmsForUser(user: String, callback: (List<Alarm>) -> Unit) {
+//    val alarmsRef = FirebaseDatabase.getInstance().getReference("Alarms")
+//
+//    // Query to filter alarms where 'u' equals the specified user
+//    val query = alarmsRef.orderByChild("u").equalTo(user)
+//
+//    query.addListenerForSingleValueEvent(object : ValueEventListener {
+//        override fun onDataChange(snapshot: DataSnapshot) {
+//            val alarmsList = mutableListOf<Alarm>()
+//            for (alarmSnapshot in snapshot.children) {
+//                val alarm = alarmSnapshot.getValue(Alarm::class.java)
+//                if (alarm != null) {
+//                    alarmsList.add(alarm)
+//                }
+//            }
+//            callback(alarmsList)
+//        }
+//
+//        override fun onCancelled(error: DatabaseError) {
+//            // Handle error
+//            println("Error fetching data: ${error.message}")
+//        }
+//    })
+//}
 
 
+fun parseTimeToMillis(time: String): Long {
+    val dateFormat = SimpleDateFormat("HH:mm")
+    val date: Date = dateFormat.parse(time)
+
+    // Get the current time in milliseconds
+    val currentTime = Calendar.getInstance()
+
+    // Set the time from the parsed date
+    val reminderTime = Calendar.getInstance().apply {
+        set(Calendar.HOUR_OF_DAY, date.hours)
+        set(Calendar.MINUTE, date.minutes)
+        set(Calendar.SECOND, 0)
+        set(Calendar.MILLISECOND, 0)
+
+        // If the reminder time is before the current time, schedule for the next day
+        if (before(currentTime)) {
+            add(Calendar.DAY_OF_MONTH, 1)
+        }
+    }
+
+    return reminderTime.timeInMillis
+}
+
+fun callUserAlarms(){
+
+}
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddReminderDialog(onDismiss: () -> Unit, onAdd: (String, String, String) -> Unit) {
@@ -188,12 +266,22 @@ fun MedicationReminderScreen(navController: NavHostController, modifier: Modifie
     var reminders by remember {
         mutableStateOf(
             listOf(
-                MedicationReminder("White Pill", "09:00 PM", "note 1"),
-                MedicationReminder("Blue Pill", "09:30 PM", "note 2")
-            )
+                    MedicationReminder("White Pill", "09:00 PM", "note 1"),
+            MedicationReminder("Blue Pill", "09:30 PM", "note 2")
+        )
         )
     }
     var showDialog by remember { mutableStateOf(false) }
+
+    // Call this function to update the reminders list
+//    LaunchedEffect(Unit) {
+//        getAlarmsForUser(cna) { alarms ->
+//            val newReminders = alarms.map { alarm ->
+//                MedicationReminder(alarm.name, alarm.time, alarm.note)
+//            }
+//            reminders = newReminders
+//        }
+//    }
 
     Scaffold(
         topBar = {
@@ -229,7 +317,10 @@ fun MedicationReminderScreen(navController: NavHostController, modifier: Modifie
             Column(
                 modifier = modifier
                     .fillMaxSize()
-                    .background(Color(0xFFE0D575))
+                    .background(Color( 254,
+                        242,
+                        172,
+                        255))
                     .padding(paddingValues)
             ) {
                 LazyColumn(modifier = Modifier.padding(16.dp)) {
@@ -253,6 +344,8 @@ fun MedicationReminderScreen(navController: NavHostController, modifier: Modifie
             onAdd = { name, time, note ->
                 reminders = reminders + MedicationReminder(name, time, note)
                 showDialog = false
+                val alarmData = Alarm(name, time, note)
+                addAlarmToDatabase(alarmData)
             }
         )
     }
@@ -294,6 +387,8 @@ fun MedicationReminderScreenPreview() {
 }
 
 
+
+
 class ReminderReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         val name = intent.getStringExtra("name") ?: return
@@ -311,9 +406,9 @@ class ReminderReceiver : BroadcastReceiver() {
         }
 
         val builder = NotificationCompat.Builder(context, channelId)
-            .setSmallIcon(R.drawable.ic_launcher_foreground)
-            .setContentTitle(name)
-            .setContentText(note)
+            .setSmallIcon(R.drawable.drop)
+            .setContentTitle(context.getString(R.string.medication_reminder))
+            .setContentText(context.getString(R.string.medication_reminder_time,name,note))
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
 
         // Check for notification permission

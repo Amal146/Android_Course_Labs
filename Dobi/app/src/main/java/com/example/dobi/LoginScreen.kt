@@ -1,7 +1,5 @@
 package com.example.dobi
 
-import android.annotation.SuppressLint
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -15,21 +13,17 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -39,6 +33,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -49,17 +44,55 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import java.net.PasswordAuthentication
+
+
+fun checkUserExists(email: String, password: String, onResult: (Boolean) -> Unit) {
+    myRef.orderByChild("email").equalTo(email).addListenerForSingleValueEvent(object :
+        ValueEventListener {
+        override fun onDataChange(snapshot: DataSnapshot) {
+            if (snapshot.exists()) {
+                for (userSnapshot in snapshot.children) {
+                    val user = userSnapshot.getValue(User::class.java)
+                    if (user != null && user.pass == password) {
+                        // Email exists and password matches
+                        cid = FirebaseAuth.getInstance().currentUser?.uid
+                        cna = user.name
+                        cem = user.email
+                        cpwd = user.pass
+                        onResult(true)
+                        return
+                    }
+                }
+            }
+            // Either email doesn't exist or password doesn't match
+            onResult(false)
+        }
+
+        override fun onCancelled(error: DatabaseError) {
+            // Error occurred
+            onResult(false)
+        }
+    })
+}
+
+var cid :String? = ""
+var cna = ""
+var cem = ""
+var cpwd = ""
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoginScreen(navController: NavHostController, modifier: Modifier = Modifier) {
     var email by remember { mutableStateOf("") }
-    var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
-    var rememberMe by remember { mutableStateOf(false) }
+    var errorMessage by remember { mutableStateOf("") }
 
 
     Scaffold(
@@ -107,10 +140,9 @@ fun LoginScreen(navController: NavHostController, modifier: Modifier = Modifier)
                     modifier = Modifier
                         .size(100.dp)
                         .clip(CircleShape)
-                        .background(Color.Gray)
                         .align(Alignment.CenterHorizontally)
                 ) {
-                    Icon(
+                    Image(
                         painter = painterResource(id = R.drawable.drop), // Replace with your own drawable resource
                         contentDescription = "Profile Picture",
                         modifier = Modifier
@@ -127,17 +159,17 @@ fun LoginScreen(navController: NavHostController, modifier: Modifier = Modifier)
                         .padding(16.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ){
-                    
+
                     BasicTextField(
-                        value = username,
-                        onValueChange = { username = it },
+                        value = email,
+                        onValueChange = { email = it },
                         modifier = Modifier
                             .fillMaxWidth()
                             .background(Color(240, 244, 246, 255))
                             .padding(16.dp),
                         decorationBox = { innerTextField ->
-                            if (username.isEmpty()) {
-                                Text(text = "Username", color = Color.Gray)
+                            if (email.isEmpty()) {
+                                Text(text = "Email", color = Color.Gray)
                             }
                             innerTextField()
                         }
@@ -161,28 +193,23 @@ fun LoginScreen(navController: NavHostController, modifier: Modifier = Modifier)
                         }
                     )
 
-                    Spacer(modifier = Modifier.height(16.dp))
 
-                    Row(
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Checkbox(
-                                checked = rememberMe,
-                                onCheckedChange = { rememberMe = it }
-                            )
-                            Text(text = "Remember me")
-                        }
-                        Spacer(modifier = Modifier.width(72.dp))
-
-                        Text(text = "Forgot Password", color = Color.Blue)
-                    }
 
                     Spacer(modifier = Modifier.height(24.dp))
 
                     Button(
-                        onClick = {navController.navigate(Screen.Home.rout)},
+                        onClick = {
+                            checkUserExists(email, password) { exists ->
+                                if (exists) {
+                                    // Navigate to home page if user exists and password is correct
+                                    navController.navigate(Screen.Home.rout)
+                                } else {
+                                    // Show error message if user doesn't exist or password is incorrect
+                                    // You can set an error message state variable to display it in the UI
+                                    errorMessage = "Invalid email or password"
+                                }
+                            }
+                        },
                         colors = ButtonDefaults.buttonColors(
                             containerColor = Color(
                                 138,
@@ -193,6 +220,9 @@ fun LoginScreen(navController: NavHostController, modifier: Modifier = Modifier)
                         ),
                     ) {
                         Text(text = "Login", color = Color.White)
+                    }
+                    if (errorMessage.isNotEmpty()) {
+                        Text(text = errorMessage, color = Color.Red)
                     }
                 }
             }

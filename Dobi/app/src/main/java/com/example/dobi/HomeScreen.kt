@@ -77,7 +77,7 @@ fun Home(navController: NavHostController, modifier: Modifier = Modifier){
                     .padding(it)
                     .fillMaxHeight()
                     .fillMaxWidth()
-                    .background(color = Color(224, 213, 117, 255)),
+                    .background(color = Color(254, 242, 172, 255)),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
@@ -165,7 +165,7 @@ fun Home(navController: NavHostController, modifier: Modifier = Modifier){
 @Preview
 @Composable
 fun viewHome(){
-    DobiTheme {
+    DobiTheme(darkTheme = true) {
         Home(navController = rememberNavController())
     }
 }

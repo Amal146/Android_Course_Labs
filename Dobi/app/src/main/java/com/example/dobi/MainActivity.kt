@@ -14,7 +14,6 @@ import androidx.navigation.compose.rememberNavController
 import com.example.dobi.ui.theme.DobiTheme
 
 class MainActivity : ComponentActivity() {
-
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)

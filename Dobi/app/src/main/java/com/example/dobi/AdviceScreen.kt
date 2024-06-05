@@ -40,6 +40,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
+
+val advicesRef = database.getReference("Advices")
+
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -80,28 +87,8 @@ fun Adviser(navController: NavHostController, modifier: Modifier = Modifier){
 
 
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AdviserScreen(modifier: Modifier = Modifier){
-        // List of diabetes advice
-    val adviceList = listOf(
-        "Stay hydrated by drinking plenty of water.",
-        "Maintain a balanced diet with low sugar intake.",
-        "Exercise regularly to manage blood sugar levels.",
-        "Monitor your blood glucose levels regularly.",
-        "Take your medications as prescribed.",
-        "Get regular check-ups with your healthcare provider.",
-        "Eat meals at regular times each day.",
-        "Incorporate more fruits and vegetables into your diet.",
-        "Avoid sugary drinks and opt for water or unsweetened beverages.",
-        "Educate yourself about diabetes to better manage it.",
-        "Keep stress levels in check with relaxation techniques.",
-        "Get adequate sleep each night to support overall health.",
-        "Avoid skipping meals to maintain stable blood sugar levels.",
-        "Limit your alcohol intake and avoid smoking.",
-        "Choose whole grains over refined grains for better nutrition."
-    )
-
 
     // State to hold the current advice
         var currentAdvice by remember { mutableStateOf("Click the button for a diabetes tip!") }
@@ -149,7 +136,18 @@ fun AdviserScreen(modifier: Modifier = Modifier){
             Button(
                 onClick = {
                 // Update current advice with a random advice from the list
-                currentAdvice = adviceList.random()
+                    advicesRef.addValueEventListener(object : ValueEventListener {
+                        override fun onDataChange(snapshot: DataSnapshot) {
+                            // Get all advices as a list
+                            val firebaseAdvices = snapshot.children.map { it.getValue(String::class.java) }
+                            // Display a random advice from the list
+                            currentAdvice = firebaseAdvices.random() ?: "No advice available"
+                        }
+
+                        override fun onCancelled(error: DatabaseError) {
+                            // Handle error
+                        }
+                    })
             },
                 colors = ButtonDefaults.buttonColors(Color(80, 180, 166, 255))
             ) {

@@ -22,6 +22,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -31,8 +32,7 @@ import androidx.navigation.compose.rememberNavController
 @Composable
 fun Welcome(navController: NavHostController, modifier: Modifier = Modifier) {
     Column (modifier = Modifier
-        .clickable { navController.navigate(Screen.Home.rout) }
-        .background(color = Color(255, 255, 153))
+        .background(color = Color(254, 242, 172, 255))
         .fillMaxHeight()
         .fillMaxWidth()
         .padding(20.dp)

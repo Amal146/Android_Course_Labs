@@ -2,16 +2,19 @@
 
 package com.example.dobi
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -30,25 +33,27 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.google.firebase.auth.FirebaseAuth
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfileSettingsScreen(navController: NavHostController, modifier: Modifier = Modifier) {
-    var username by remember { mutableStateOf(TextFieldValue("annielarson")) }
-    var email by remember { mutableStateOf(TextFieldValue("annie.larson@gmail.com")) }
-    var showChangePasswordDialog by remember { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(text = "                 Settings", color = Color.White , fontWeight = FontWeight.Bold ) },
+                title = { Text(text = "My Account", color = Color.White , fontWeight = FontWeight.Bold ) },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = Color(139, 188, 62, 255),
                     titleContentColor = Color(255,255,255) ,
@@ -81,10 +86,10 @@ fun ProfileSettingsScreen(navController: NavHostController, modifier: Modifier =
                     modifier = Modifier
                         .size(100.dp)
                         .clip(CircleShape)
-                        .background(Color.Gray)
+                        .background(Color(138, 187, 62, 255))
                         .align(Alignment.CenterHorizontally)
                 ) {
-                    Icon(
+                    Image(
                         painter = painterResource(id = R.drawable.drop), // Replace with your own drawable resource
                         contentDescription = "Profile Picture",
                         modifier = Modifier
@@ -96,51 +101,42 @@ fun ProfileSettingsScreen(navController: NavHostController, modifier: Modifier =
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                Row (){
-                    Text(
-                        text = "PROFILE",
-                        color = Color(0xFFE15C7C),
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 20.sp,
-                        modifier = Modifier
-                            .padding(16.dp)
-                            .weight(2.5f)
-
-                    )
-                    Icon(
-                        imageVector = Icons.Default.Edit,
-                        tint = Color(0xFFE15C7C),
-                        contentDescription = "Edit Username",
-                        modifier = Modifier
-                            .width(60.dp)
-                            .height(60.dp)
-                            .padding(start = 8.dp)
-                            .weight(0.5f)
-                            .clickable {  showChangePasswordDialog = true },
-
-                    )
-                }
-
-
-
                 Column(
                     modifier = Modifier
-                        .fillMaxSize()
+                        .fillMaxWidth()
                         .background(Color(0xFFFEF2AC))
                         .padding(16.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Spacer(modifier = Modifier.height(20.dp))
-                    ProfileItem(label = "Username", value = username.text)
+                    ProfileItem(label = "Username", value = cna)
                     Divider()
-                    ProfileItem(label = "Email", value = email.text)
+                    ProfileItem(label = "Email", value = cem)
                     Divider()
-                    ProfileItem(label = "Change password", value = "********" )
+                    ProfileItem(label = "Password", value = cpwd)
                 }
 
-                if (showChangePasswordDialog) {
-                    ChangePasswordDialog(onDismiss = { showChangePasswordDialog = false })
+                Spacer(modifier = Modifier.height(20.dp))
+
+                Button(
+                    modifier = Modifier.align(alignment = Alignment.CenterHorizontally),
+                    onClick = {
+                        // Handle logout
+                        FirebaseAuth.getInstance().signOut()
+                        navController.navigate("login") {
+                            popUpTo(navController.graph.startDestinationId) {
+                                inclusive = true
+                            }
+                        }
+                    },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(0xFFE15C7C),
+                        contentColor = Color.White
+                    )
+                ) {
+                    Text("Logout")
                 }
+
             }
         }
     )
@@ -149,56 +145,9 @@ fun ProfileSettingsScreen(navController: NavHostController, modifier: Modifier =
 
 
 @Composable
-fun ChangePasswordDialog(onDismiss: () -> Unit) {
-    var currentPassword by remember { mutableStateOf(TextFieldValue()) }
-    var newPassword by remember { mutableStateOf(TextFieldValue()) }
-    var confirmPassword by remember { mutableStateOf(TextFieldValue()) }
+fun ProfileItem(label: String, value: String) {
+    var showPassword by remember { mutableStateOf(false) }
 
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        title = { Text("Change Password") },
-        text = {
-            Column {
-                OutlinedTextField(
-                    value = currentPassword,
-                    onValueChange = { currentPassword = it },
-                    label = { Text("Current Password") },
-                    visualTransformation = PasswordVisualTransformation()
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-                OutlinedTextField(
-                    value = newPassword,
-                    onValueChange = { newPassword = it },
-                    label = { Text("New Password") },
-                    visualTransformation = PasswordVisualTransformation()
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-                OutlinedTextField(
-                    value = confirmPassword,
-                    onValueChange = { confirmPassword = it },
-                    label = { Text("Confirm Password") },
-                    visualTransformation = PasswordVisualTransformation()
-                )
-            }
-        },
-        confirmButton = {
-            Button(onClick = {
-                // Handle password change logic here
-                onDismiss()
-            }) {
-                Text("Change")
-            }
-        },
-        dismissButton = {
-            Button(onClick = onDismiss) {
-                Text("Cancel")
-            }
-        }
-    )
-}
-
-@Composable
-fun ProfileItem(label: String, value: String, icon: Int? = null) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -207,14 +156,34 @@ fun ProfileItem(label: String, value: String, icon: Int? = null) {
         verticalAlignment = Alignment.CenterVertically
     ) {
         Column {
-            Text(text = label, fontWeight = FontWeight.Bold, color = Color(0xFF58AEF2), fontSize = 20.sp)
+            Text(
+                text = label,
+                fontWeight = FontWeight.Bold,
+                color = Color(0xFF58AEF2),
+                fontSize = 20.sp
+            )
             Spacer(modifier = Modifier.height(4.dp))
-            Text(text = value, fontSize = 20.sp)
-        }
 
+
+                if (label == "Password") {
+                    val asterisks = generateAsterisks(value)
+
+                    Text(
+                        modifier = Modifier.fillMaxWidth().clickable {showPassword = !showPassword },
+                        text = if (showPassword) value else asterisks
+                    ,
+                    )
+                } else {
+                    // For other fields
+                    Text(text = value, fontSize = 20.sp)
+                }
+
+        }
     }
 }
-
+fun generateAsterisks(input: String): String {
+    return "*".repeat(input.length)
+}
 @Preview(showBackground = true)
 @Composable
 fun ProfileSettingsScreenPreview() {
